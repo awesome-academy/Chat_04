@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_56dp">56dp</dimen>
+    <dimen name="size_48dp">48dp</dimen>
+    <dimen name="size_32dp">32dp</dimen>
+    <dimen name="size_80dp">80dp</dimen>
+    <dimen name="size_140dp">140dp</dimen>
+    <dimen name="size_150dp">170dp</dimen>
+
+    <!--Profile-->
+    <dimen name="image_profile_height">200dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+
+    <!--Size text-->
+    <dimen name="text_heading">32sp</dimen>
+    <dimen name="text_title">24sp</dimen>
+    <dimen name="text_title_2">20sp</dimen>
+    <dimen name="text_body">16sp</dimen>
+    <dimen name="text_body_2">14sp</dimen>
+
+    <!--Margin-->
+    <dimen name="margin16dp">16dp</dimen>
+    <dimen name="margin8dp">8dp</dimen>
+    <dimen name="margin32dp">32dp</dimen>
+    <dimen name="margin48dp">48dp</dimen>
+    <dimen name="margin64dp">64dp</dimen>
+    <dimen name="margin88dp">88dp</dimen>
+
+    <!--Border-->
+    <dimen name="size_border">1dp</dimen>
+
+    <!--Radius-->
+    <dimen name="radius_10dp">10dp</dimen>
+    <dimen name="radius_4dp">4dp</dimen>
+    <dimen name="radius_2dp">2dp</dimen>
+    <dimen name="radius_7dp">7dp</dimen>
+
+    <!--Padding-->
+    <dimen name="padding32dp">32dp</dimen>
+    <dimen name="padding8dp">8dp</dimen>
+    <dimen name="padding4dp">4dp</dimen>
+    <dimen name="padding16dp">16dp</dimen>
+</resources>
