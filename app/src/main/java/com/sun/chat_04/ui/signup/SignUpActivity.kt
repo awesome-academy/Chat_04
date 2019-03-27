@@ -13,30 +13,55 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.DatePicker
 import android.widget.RadioButton
+import android.widget.Toast
 import com.jpardogo.android.googleprogressbar.library.ChromeFloatingCirclesDrawable
+import com.sun.chat_04.R
 import com.sun.chat_04.R.color
 import com.sun.chat_04.R.id
 import com.sun.chat_04.R.layout
+import com.sun.chat_04.R.string
 import com.sun.chat_04.data.model.User
-import kotlinx.android.synthetic.main.sign_up_screen.button_signUp
-import kotlinx.android.synthetic.main.sign_up_screen.edit_confirm_password
-import kotlinx.android.synthetic.main.sign_up_screen.edit_email
-import kotlinx.android.synthetic.main.sign_up_screen.edit_fullname
-import kotlinx.android.synthetic.main.sign_up_screen.edit_password
+import com.sun.chat_04.data.model.UserRemoteDataSource
+import com.sun.chat_04.ui.signup.SignUpActivity.Status.INVALID
+import kotlinx.android.synthetic.main.sign_up_screen.buttonSignUp
+import kotlinx.android.synthetic.main.sign_up_screen.editConfirmPassword
+import kotlinx.android.synthetic.main.sign_up_screen.editEmail
+import kotlinx.android.synthetic.main.sign_up_screen.editFullname
+import kotlinx.android.synthetic.main.sign_up_screen.editPassword
 import kotlinx.android.synthetic.main.sign_up_screen.progress
-import kotlinx.android.synthetic.main.sign_up_screen.radio_groups
-import kotlinx.android.synthetic.main.sign_up_screen.text_birthday
+import kotlinx.android.synthetic.main.sign_up_screen.radioGroups
+import kotlinx.android.synthetic.main.sign_up_screen.textBirthday
 import kotlinx.android.synthetic.main.sign_up_screen.toolbar
 import java.util.Calendar
 
-class SignUpActivity : AppCompatActivity(), OnClickListener {
-    private var user: User? = null
+class SignUpActivity : AppCompatActivity(), OnClickListener, SignUpContract.View {
+
+    private var presenter: SignUpPresenter? = null
+    private var user: User = User()
+    private var email = ""
+    private var password = ""
+    private var confirmPasswork = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.sign_up_screen)
+        presenter = SignUpPresenter(this, UserRemoteDataSource())
         initComponents()
         requirePermissions()
+    }
+
+    override fun isValid(status: Status) {
+        if (status == INVALID) {
+            showNotify(resources.getString(string.sign_up_error))
+        } else {
+            presenter?.signUpAccount(user, email, password)
+        }
+        progress.visibility = View.GONE
+    }
+
+    override fun isSaved(status: Boolean) {
+        if (status) showNotify(resources.getString(R.string.sign_up_success))
+        else showNotify(resources.getString(R.string.sign_up_existed))
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -54,8 +79,8 @@ class SignUpActivity : AppCompatActivity(), OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            id.text_birthday -> showDatePicker()
-            id.button_signUp -> handleSignUp()
+            id.textBirthday -> showDatePicker()
+            id.buttonSignUp -> handleSignUp()
         }
     }
 
@@ -74,9 +99,8 @@ class SignUpActivity : AppCompatActivity(), OnClickListener {
     }
 
     private fun initComponents() {
-        text_birthday.setOnClickListener(this)
-        button_signUp.setOnClickListener(this)
-
+        textBirthday.setOnClickListener(this)
+        buttonSignUp.setOnClickListener(this)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -88,14 +112,15 @@ class SignUpActivity : AppCompatActivity(), OnClickListener {
     private fun handleSignUp() {
         displayProgressBar()
         progress.visibility = View.VISIBLE
-        val name = edit_fullname.text.toString()
-        val birth = text_birthday.text.toString()
-        val viewId = radio_groups.findViewById<RadioButton>(radio_groups.checkedRadioButtonId)
-        val gender = radio_groups.indexOfChild(viewId).toString()
-        val email = edit_email.text.toString()
-        val pass = edit_password.text.toString()
-        val confirmPass = edit_confirm_password.text.toString()
-        user = User(name, birth, gender)
+        val name = editFullname.text.toString()
+        val birth = textBirthday.text.toString()
+        val viewId = radioGroups.findViewById<RadioButton>(radioGroups.checkedRadioButtonId)
+        val gender = radioGroups.indexOfChild(viewId).toString()
+        email = editEmail.text.toString()
+        password = editPassword.text.toString()
+        confirmPasswork = editConfirmPassword.text.toString()
+        user = User(userName = name, birthday = birth, gender = gender)
+        presenter?.checkValid(user, email, password, confirmPasswork)
     }
 
     private fun displayProgressBar() {
@@ -120,13 +145,21 @@ class SignUpActivity : AppCompatActivity(), OnClickListener {
             DatePickerDialog.OnDateSetListener { datePicker: DatePicker, year: Int, month: Int, day: Int ->
                 cal.set(year, month, day)
                 val date = DateUtils.formatDateTime(this, cal.timeInMillis, DateUtils.FORMAT_SHOW_YEAR)
-                text_birthday.setText(date.format(cal.time))
+                textBirthday.setText(date.format(cal.time))
             }
         val picker = DatePickerDialog(
             this, callback, cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
         )
         picker.show()
+    }
+
+    private fun showNotify(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    enum class Status {
+        INVALID, VALID, SUCCESS
     }
 
     companion object {
