@@ -250,7 +250,7 @@ class FriendDetailFragment : Fragment(), FriendDetailContract.View, OnClickListe
 
     private fun handleChat() {
         user.userName.let {
-            val friend = Friend(user.idUser, user.pathAvatar, user.isOnline, userName = it)
+            val friend = Friend(user.idUser, user.pathAvatar, user.online, userName = it)
             activity?.supportFragmentManager
                 ?.beginTransaction()
                 ?.replace(R.id.parentLayout, ChatFragment.newInstance(friend))

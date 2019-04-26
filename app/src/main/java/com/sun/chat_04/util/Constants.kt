@@ -59,4 +59,6 @@ object Constants {
     const val IMAGES = "Images"
     const val REQUEST_CODE_EDIT_INFO = 13
     const val KEY_EDIT_INFO = "KEY_EDIT_INFO"
+    const val USER_ONLINE = "online"
+    const val NOTIFICATION = "Notification"
 }
